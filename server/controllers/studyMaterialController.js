@@ -51,23 +51,18 @@ exports.downvoteMaterial = async (req, res) => {
     try {
       const { id } = req.params;
   
-      // Find the material by ID
       const material = await StudyMaterial.findById(id);
       if (!material) {
         return res.status(404).json({ message: 'Material not found.' });
       }
   
-      // Increment the downvotes
       material.votesDown += 1;
   
-      // Check if downvotes reach the threshold
       if (material.votesDown >= 10) {
-        // Delete the material from the database
         await StudyMaterial.findByIdAndDelete(id);
         return res.status(200).json({ message: 'Material deleted due to excessive downvotes.' });
       }
   
-      // Save the updated material
       await material.save();
   
       res.status(200).json({
