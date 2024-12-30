@@ -10,7 +10,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <title>QUERY CRAFT</title>
+      <title>Learn together</title>
       <meta name="description" content="Tamweel Internal Portal" />
       <body suppressHydrationWarning={true}>
         <SessionProvider>{children}</SessionProvider>
