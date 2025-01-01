@@ -10,7 +10,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <title>Learn together</title>
-      <meta name="description" content="Tamweel Internal Portal" />
+      <meta name="description" content="LEARN tOGETHER STUDENT HUB PORTAL" />
       <body suppressHydrationWarning={true}>{children}
       </body>
     </html>

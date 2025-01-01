@@ -6,6 +6,7 @@ const studyMaterialRoutes = require('./routes/studyMaterialRoutes');
 const programRoutes = require('./routes/programRoutes');
 const semesterRoutes = require('./routes/semesterRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use('/api', studyMaterialRoutes);
 app.use('/api/programs', programRoutes);
 app.use('/api/semesters', semesterRoutes);
 app.use('/api/courses', courseRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 const PORT = 8989;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

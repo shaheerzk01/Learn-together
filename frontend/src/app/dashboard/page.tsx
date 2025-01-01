@@ -1,7 +1,7 @@
 import React from "react";
 import Banner from "@/components/banner";
 import Card from "@/components/card";
-
+import Quote from "@/components/quote";
 const Dashboard = () => {
   return (
     <>
@@ -21,21 +21,14 @@ const Dashboard = () => {
           {/* Cards Section */}
           <div className="flex flex-wrap lg:flex-nowrap gap-6">
             {/* Left Section (70%) */}
-            <div className="w-full lg:w-[70%] grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="w-full lg:w-[70%] grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
               <Card />
               <Card />
-                <Card />
-                <Card />
+              <Card />
             </div>
-
             {/* Right Section (30%) */}
-            <div className="w-full lg:w-[30%] bg-white shadow-md rounded-md p-4 text-center">
-              <h3 className="font-bold text-xl">Get Connected for Updates</h3>
-              <ul className="mt-4 text-gray-600">
-                <li>Facebook</li>
-                <li>WhatsApp</li>
-                <li>Telegram</li>
-              </ul>
+            <div className="lg:w-[30%]">
+              <Quote />
             </div>
           </div>
         </div>
