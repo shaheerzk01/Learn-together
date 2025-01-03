@@ -1,12 +1,15 @@
 import React from "react";
+interface CardProps {
+  name: string;
+  description: string;
+}
 
-const Card = () => {
+const Card = ({name, description}: CardProps) => {
   return (
     <div className="w-[250px]  text-white rounded-lg shadow-lg">
       {/* Header Section */}
       <div className="p-6 bg-[#D32F2F]">
-        <h2 className="text-3xl font-bold italic">Electrical</h2>
-        <h3 className="text-2xl font-bold uppercase tracking-wide">Engineering</h3>
+        <h2 className="text-3xl font-bold italic">{name}</h2>
       </div>
 
       {/* Year Links */}
