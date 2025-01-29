@@ -1,14 +1,19 @@
 "use client";
 import DefaultBanner from "@/components/defaultBanner";
 import React from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Semester = () => {
   const searchParams = useSearchParams();
   const semestersParam = searchParams.get("semesters");
+  const router = useRouter();
 
-  // Parse the semesters query parameter
   const semesters = semestersParam ? JSON.parse(decodeURIComponent(semestersParam)) : [];
+
+  const handleCheckoutCourses = (semesterId: string) => {
+    // Navigate to the Course page with the semesterId as a query parameter
+    router.push(`/department/semester/course?semesterId=${semesterId}`);
+  };
 
   return (
     <>
@@ -30,7 +35,7 @@ const Semester = () => {
                   </span>
                   <button
                     className="text-sm text-blue-600 hover:underline focus:outline-none"
-                    onClick={() => alert(`Viewing courses for Semester ${semester.semesterNumber}`)} // Replace with navigation or actual functionality
+                    onClick={() => handleCheckoutCourses(semester._id)}
                   >
                     Checkout the courses
                   </button>
