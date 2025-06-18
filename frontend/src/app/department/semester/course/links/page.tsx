@@ -2,8 +2,7 @@
 import DefaultBanner from "@/components/defaultBanner";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getStudyLinks, studyLinkData } from "@/api/studyLinks";
-import { uploadMaterial, UploadMaterialData } from "@/api/studyLinks";
+import { getStudyLinks, studyLinkData, uploadMaterial, UploadMaterialData } from "@/api/studyLinks";
 
 const StudyLinks = () => {
   const searchParams = useSearchParams();
@@ -13,11 +12,14 @@ const StudyLinks = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [uploadType, setUploadType] = useState<"youtube" | "pdf">("youtube");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+
   const [formData, setFormData] = useState<UploadMaterialData>({
     title: "",
     description: "",
     youtubeLink: "",
-    courseId: courseId || "", // Set courseId from URL
+    courseId: courseId || "",
   });
 
   useEffect(() => {
@@ -46,12 +48,27 @@ const StudyLinks = () => {
 
   const handleUpload = async () => {
     try {
-      if (!formData.title || !formData.youtubeLink || !formData.description) {
-        alert("All fields are required!");
+      if (!formData.title || !formData.description) {
+        alert("Title and description are required!");
         return;
       }
 
-      await uploadMaterial(formData);
+      if (uploadType === "youtube" && !formData.youtubeLink) {
+        alert("YouTube link is required!");
+        return;
+      }
+
+      if (uploadType === "pdf" && !pdfFile) {
+        alert("PDF file is required!");
+        return;
+      }
+
+      await uploadMaterial({
+        ...formData,
+        pdfFile: uploadType === "pdf" ? pdfFile! : undefined,
+        youtubeLink: uploadType === "youtube" ? formData.youtubeLink : undefined,
+      });
+
       setIsModalOpen(false);
       setFormData({
         title: "",
@@ -59,8 +76,9 @@ const StudyLinks = () => {
         youtubeLink: "",
         courseId: courseId || "",
       });
+      setPdfFile(null);
+      setUploadType("youtube");
 
-      // Refresh the study materials list
       const updatedMaterials = await getStudyLinks(courseId!);
       setStudyLinks(updatedMaterials);
     } catch (err) {
@@ -90,27 +108,43 @@ const StudyLinks = () => {
           {!loading && !error && studyLinks.length > 0 ? (
             <ul className="space-y-4">
               {studyLinks.map((link) => (
-                <li
-                  key={link._id}
-                  className="p-3 border-b last:border-none flex flex-col gap-2"
-                >
+                <li key={link._id} className="p-3 border-b last:border-none flex flex-col gap-2">
                   <span className="font-bold text-gray-800">{link.title}</span>
                   <p className="text-sm text-gray-600">{link.description}</p>
-                  <a
-                    href={link.youtubeLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline text-sm"
-                  >
-                    Watch on YouTube
-                  </a>
+                  {link.youtubeLink && (
+                    <a
+                      href={link.youtubeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline text-sm"
+                    >
+                      Watch on YouTube
+                    </a>
+                  )}
+                  {link.pdfPath && (
+                    <div className="flex gap-3">
+                      <a
+                        href={`http://localhost:8989${link.pdfPath}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-700 hover:underline text-sm"
+                      >
+                        View PDF
+                      </a>
+                      <a
+                        href={`http://localhost:8989${link.pdfPath}`}
+                        download
+                        className="text-purple-700 hover:underline text-sm"
+                      >
+                        Download PDF
+                      </a>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600 text-center">
-              No study materials available.
-            </p>
+            <p className="text-gray-600 text-center">No study materials available.</p>
           )}
         </div>
       </div>
@@ -120,6 +154,31 @@ const StudyLinks = () => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg w-96">
             <h2 className="text-lg font-bold mb-4">Upload Study Material</h2>
+
+            {/* Upload type toggle */}
+            <div className="mb-4">
+  <label className="mr-4">
+    <input
+      type="radio"
+      name="uploadType"
+      value="youtube"
+      checked={uploadType === "youtube"}
+      onChange={(e) => setUploadType(e.target.value as "youtube" | "pdf")}
+    />
+    <span className="ml-2">YouTube Link</span>
+  </label>
+  <label className="ml-4">
+    <input
+      type="radio"
+      name="uploadType"
+      value="pdf"
+      checked={uploadType === "pdf"}
+      onChange={(e) => setUploadType(e.target.value as "youtube" | "pdf")}
+    />
+    <span className="ml-2">PDF File</span>
+  </label>
+</div>
+
 
             <input
               type="text"
@@ -138,14 +197,25 @@ const StudyLinks = () => {
               className="w-full p-2 border border-gray-300 rounded mb-2"
             />
 
-            <input
-              type="text"
-              name="youtubeLink"
-              placeholder="YouTube Link"
-              value={formData.youtubeLink}
-              onChange={handleInputChange}
-              className="w-full p-2 border border-gray-300 rounded mb-2"
-            />
+            {uploadType === "youtube" && (
+              <input
+                type="text"
+                name="youtubeLink"
+                placeholder="YouTube Link"
+                value={formData.youtubeLink}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded mb-2"
+              />
+            )}
+
+            {uploadType === "pdf" && (
+              <input
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => setPdfFile(e.target.files?.[0] || null)}
+                className="w-full p-2 border border-gray-300 rounded mb-2"
+              />
+            )}
 
             <div className="flex justify-between">
               <button

@@ -1,14 +1,27 @@
 const StudyMaterial = require('../models/studyMaterial');
 
 // Upload a new study material
+// Upload a new study material (either YouTube link or PDF)
 exports.uploadMaterial = async (req, res) => {
   try {
     const { title, description, youtubeLink, courseId } = req.body;
 
+    const hasYoutubeLink = !!youtubeLink;
+    const hasPdf = !!req.file;
+
+    if (hasYoutubeLink && hasPdf) {
+      return res.status(400).json({ message: 'Please provide either a YouTube link or a PDF, not both.' });
+    }
+
+    if (!hasYoutubeLink && !hasPdf) {
+      return res.status(400).json({ message: 'Please provide a YouTube link or upload a PDF.' });
+    }
+
     const newMaterial = new StudyMaterial({
       title,
       description,
-      youtubeLink,
+      youtubeLink: hasYoutubeLink ? youtubeLink : null,
+      pdfPath: hasPdf ? `/uploads/${req.file.filename}` : null,
       courseId,
     });
 
@@ -18,6 +31,7 @@ exports.uploadMaterial = async (req, res) => {
     res.status(500).json({ message: 'Error uploading study material.', error });
   }
 };
+
 
 // Get all study materials
 exports.getMaterials = async (req, res) => {

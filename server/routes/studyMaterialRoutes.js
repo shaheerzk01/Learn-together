@@ -5,10 +5,12 @@ const {
   upvoteMaterial,
   downvoteMaterial,
 } = require('../controllers/studyMaterialController');
+const upload = require('../middlewares/upload'); 
+
 
 const router = express.Router();
 
-router.post('/materials', uploadMaterial);
+router.post('/materials', upload.single('pdfFile'), uploadMaterial);
 
 router.get('/get-materials/:courseId', getMaterials);
 

@@ -1,4 +1,5 @@
 export interface studyLinkData {
+  pdfPath: any;
   _id: string;
   title: string;
   youtubeLink: string;
@@ -32,29 +33,57 @@ export const getStudyLinks = async (
 };
 
 export interface UploadMaterialData {
-    title: string;
-    description: string;
-    youtubeLink: string;
-    courseId: string;
-  }
+  title: string;
+  description: string;
+  youtubeLink?: string; // optional
+  courseId: string;
+  pdfFile?: File;       // optional
+}
   
-  export const uploadMaterial = async (data: UploadMaterialData): Promise<void> => {
-    try {
-      const response = await fetch(`http://localhost:8989/api/materials`, {
+export const uploadMaterial = async (data: UploadMaterialData): Promise<void> => {
+  try {
+    const isPdf = !!data.pdfFile;
+
+    let response;
+
+    if (isPdf) {
+      // If uploading a PDF, use FormData
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("courseId", data.courseId);
+      if (data.pdfFile) {
+        formData.append("pdfFile", data.pdfFile); // field name must match multer setup
+      }
+
+      response = await fetch(`http://localhost:8989/api/materials`, {
+        method: "POST",
+        body: formData,
+      });
+    } else {
+      // If uploading a YouTube link, send JSON
+      response = await fetch(`http://localhost:8989/api/materials`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          youtubeLink: data.youtubeLink,
+          courseId: data.courseId,
+        }),
       });
-  
-      if (!response.ok) {
-        throw new Error(`Error uploading material: ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error("Error uploading material:", error);
-      throw error;
     }
-  };
+
+    if (!response.ok) {
+      throw new Error(`Error uploading material: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error uploading material:", error);
+    throw error;
+  }
+};
+
   
 
