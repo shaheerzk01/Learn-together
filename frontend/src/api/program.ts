@@ -1,5 +1,4 @@
 export interface ProgramData {
-  id(id: any, year: string): void;
   _id: string;
   name: string;
   description: string;

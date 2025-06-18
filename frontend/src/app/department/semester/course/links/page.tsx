@@ -38,7 +38,9 @@ const StudyLinks = () => {
     fetchStudyLinks();
   }, [courseId]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -51,7 +53,12 @@ const StudyLinks = () => {
 
       await uploadMaterial(formData);
       setIsModalOpen(false);
-      setFormData({ title: "", description: "", youtubeLink: "", courseId: courseId || "" });
+      setFormData({
+        title: "",
+        description: "",
+        youtubeLink: "",
+        courseId: courseId || "",
+      });
 
       // Refresh the study materials list
       const updatedMaterials = await getStudyLinks(courseId!);
@@ -101,7 +108,9 @@ const StudyLinks = () => {
               ))}
             </ul>
           ) : (
-            <p className="text-gray-600 text-center">No study materials available.</p>
+            <p className="text-gray-600 text-center">
+              No study materials available.
+            </p>
           )}
         </div>
       </div>

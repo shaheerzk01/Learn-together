@@ -7,7 +7,7 @@ const studyMaterialSchema = new mongoose.Schema({
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'courses', required:  true}, // To associate with a course
   votesUp: { type: Number, default: 0 },
   votesDown: { type: Number, default: 0 },
-  status: { type: String, default: 'active' }, // active | removed
+  status: { type: String, default: 'active' },
   createdAt: { type: Date, default: Date.now },
 });
 
