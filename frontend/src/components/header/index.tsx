@@ -1,5 +1,5 @@
 import React from "react";
-import { FaHome, FaInfoCircle, } from "react-icons/fa"; // Icons for navigation
+import { FaHome, FaInfoCircle, FaDollarSign } from "react-icons/fa"; // Icons for navigation
 import { RiMiniProgramFill } from "react-icons/ri";
 import { MdFeedback } from "react-icons/md"; // Feedback icon
 import { BiUser } from "react-icons/bi";
@@ -30,6 +30,10 @@ const Header = () => {
         <a href="/feedback" className="flex items-center gap-1 hover:underline">
           <MdFeedback />
           Feedback
+        </a>
+        <a href="/pricing" className="flex items-center gap-1 hover:underline">
+          <FaDollarSign />
+          Pricing
         </a>
       </nav>
     </header>

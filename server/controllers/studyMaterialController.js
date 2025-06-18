@@ -22,12 +22,14 @@ exports.uploadMaterial = async (req, res) => {
 // Get all study materials
 exports.getMaterials = async (req, res) => {
   try {
-    const materials = await StudyMaterial.find({ status: 'active' });
+    const { courseId } = req.params;
+    const materials = await StudyMaterial.find({ courseId });
     res.status(200).json(materials);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching study materials.', error });
   }
 };
+
 
 // Upvote a material
 exports.upvoteMaterial = async (req, res) => {

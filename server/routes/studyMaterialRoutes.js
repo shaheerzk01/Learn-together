@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post('/materials', uploadMaterial);
 
-router.get('/get-materials', getMaterials);
+router.get('/get-materials/:courseId', getMaterials);
 
 router.patch('/materials/:id/upvote', upvoteMaterial);
 
